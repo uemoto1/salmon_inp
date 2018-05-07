@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 import re
-import tool
+from . import tool
 import collections
 from numpy import pi, cos, sqrt, empty, array, vstack
 
@@ -25,7 +25,7 @@ def split_cif(text):
         yield text[start:]
 
 
-def read_cif(text, eps=):
+def parse_cif(text):
     buff = collections.deque(split_cif(text))
     data = {}
     state = 0
@@ -56,12 +56,27 @@ def read_cif(text, eps=):
             else:
                 buff.appendleft(item)
                 state = 0
+    
+    return data
+    
+    
+def read_cif(text):
+    data = parse_cif(text)
+    
+    # atomic coordinates
+    site_pos = vstack([
+        array(data["_atom_site_fract_x"], dtype=float),
+        array(data["_atom_site_fract_y"], dtype=float),
+        array(data["_atom_site_fract_z"], dtype=float),
+    ]).T
+    
+    # atomic labels
+    site_label = data["_atom_site_label"]
 
-    # extract cif file
+    # construction of unit cell
     cos_ab = cos(pi / 180 * float(data.get("_cell_angle_gamma", 90)))
     cos_bc = cos(pi / 180 * float(data.get("_cell_angle_alpha", 90)))
     cos_ca = cos(pi / 180 * float(data.get("_cell_angle_beta", 90)))
-
     # unit vectors for lattice axis
     u_prim = empty([3, 3])
     # a
@@ -80,26 +95,23 @@ def read_cif(text, eps=):
     a_prim[1] = u_prim[1] * (float(data["_cell_length_b"][0]) / au_aa)
     a_prim[2] = u_prim[2] * (float(data["_cell_length_c"][0]) / au_aa)
 
-    site_pos = vstack([
-        array(data["_atom_site_fract_x"], dtype=float),
-        array(data["_atom_site_fract_y"], dtype=float),
-        array(data["_atom_site_fract_z"], dtype=float),
-    ]).T
-
+    # symmetry operations
     if "_symmetry_equiv_pos_as_xyz" in data:
         symop_list = data["_symmetry_equiv_pos_as_xyz"]
     elif "_space_group_symop_operation_xyz" in data:
         symop_list = data["_space_group_symop_operation_xyz"]
     else:
-        symop_list = [] # Non symmetry operation
+        symop_list = []
 
-    site_list = []
-    for r, lbl in zip(site_pos, data["_atom_site_label"]):
+    site_pos2, site_label2 = [], []
+    for r, lbl in zip(site_pos, site_label):
         for symop in symop_list:
             # calculate symmetry equivalent position: r_sym
             symop2 = re.sub(r"(\d+)/", r"\1.0/", symop.lower())
             r_sym = array(eval(symop2, {"x": r[0], "y": r[1], "z": r[2]}))
-            if not tool.is_same_position(a_prim, r_sym, site_list):
-                site_list += [(r_sym, lbl)]
+            #
+            if not tool.is_same_position(a_prim, r_sym, site_pos2):
+                site_pos2 += [r_sym % 1]
+                site_label2 += [lbl]
                 
-    return a_prim, site_list
+    return a_prim, site_pos2, site_label2

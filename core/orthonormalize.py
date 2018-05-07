@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 
 from itertools import product
-from numpy import dot, array, empty, argmin, rint
-from numpy.linspace import norm, inv, det
+from numpy import dot, array, empty, argmax, rint
+from numpy.linalg import norm, inv, det
 
 eps = 1e-3
 
@@ -13,11 +13,11 @@ def dot_cos(a, b):
 
 def search_orthonormal_lattice(a_prim, nmax=2):
 
-    def func_score(ns):
-        a_temp = dot(ns, a_prim)
-        p0 = abs(dot_cos(a_temp[0]), a_prim[0])
-        p1 = abs(dot_cos(a_temp[1]), a_prim[1])
-        p2 = abs(dot_cos(a_temp[2]), a_prim[2])
+    def func_score(it):
+        ns, a_temp = it
+        p0 = abs(dot_cos(a_temp[0], a_prim[0]))
+        p1 = abs(dot_cos(a_temp[1], a_prim[1]))
+        p2 = abs(dot_cos(a_temp[2], a_prim[2]))
         return (p2, p1, p0)
 
     nlist = [
@@ -59,13 +59,12 @@ def search_orthonormal_lattice(a_prim, nmax=2):
                         v_min = v
                         result = []
                     if v == v_min:
-                        result += [([n0, n1, n2], a_temp)]
+                        result += [([n0, n1, n2], a_temp.copy())]
 
     priority_score = [
         func_score(ns) for ns in result
     ]
-
-    return result[argmin(priority_score)]
+    return result[argmax(priority_score)]
 
 
 def generate_atomic_position(ns, rion, kion, nmax=2):

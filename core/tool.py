@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import re
 from numpy import array, dot
 from numpy.linalg import norm
 from itertools import product
@@ -15,3 +16,6 @@ def is_same_position(a_prim, r, r_list, eps=1e-1):
             return True
     return False
             
+def label2symbol(label):
+    res = re.match("([A-Z][a-z]*).*", label)
+    return res.group(1)
