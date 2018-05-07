@@ -25,7 +25,7 @@ def split_cif(text):
         yield text[start:]
 
 
-def parse_cif(text):
+def read_cif(text, eps=):
     buff = collections.deque(split_cif(text))
     data = {}
     state = 0
@@ -57,10 +57,7 @@ def parse_cif(text):
                 buff.appendleft(item)
                 state = 0
 
-    return data
-
-
-def read_cif_data(data, eps=1e-2):
+    # extract cif file
     cos_ab = cos(pi / 180 * float(data.get("_cell_angle_gamma", 90)))
     cos_bc = cos(pi / 180 * float(data.get("_cell_angle_alpha", 90)))
     cos_ca = cos(pi / 180 * float(data.get("_cell_angle_beta", 90)))
@@ -96,14 +93,13 @@ def read_cif_data(data, eps=1e-2):
     else:
         symop_list = [] # Non symmetry operation
 
-    atom_list = []
+    site_list = []
     for r, lbl in zip(site_pos, data["_atom_site_label"]):
         for symop in symop_list:
             # calculate symmetry equivalent position: r_sym
             symop2 = re.sub(r"(\d+)/", r"\1.0/", symop.lower())
             r_sym = array(eval(symop2, {"x": r[0], "y": r[1], "z": r[2]}))
-
-            if not tool.is_same_position(a_prim, r_sym, atom_list):
-                atom_list += (r_sym, lbl)
+            if not tool.is_same_position(a_prim, r_sym, site_list):
+                site_list += [(r_sym, lbl)]
                 
-    return a_prim, atom_list
+    return a_prim, site_list
