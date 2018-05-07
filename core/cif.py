@@ -59,6 +59,9 @@ def parse_cif(text):
     
     return data
     
+def label2symbol(label):
+    res = re.match("([A-Z][a-z]*).*", label)
+    return res.group(1)
     
 def read_cif(text):
     data = parse_cif(text)
@@ -112,6 +115,6 @@ def read_cif(text):
             #
             if not tool.is_same_position(a_prim, r_sym, site_pos2):
                 site_pos2 += [r_sym % 1]
-                site_label2 += [lbl]
+                site_label2 += [label2symbol(lbl)]
                 
-    return a_prim, site_pos2, site_label2
+    return data["_chemical_name_mineral"], a_prim, site_pos2, site_label2

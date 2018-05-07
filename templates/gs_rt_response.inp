@@ -3,7 +3,7 @@
 /
 
 &control
-  sysname = 'Si'
+  sysname = '{SYSNAME}'
 /
 
 &units
@@ -12,17 +12,17 @@
 
 &system
   iperiodic = 3
-  al = 10.26d0, 10.26d0, 10.26d0
-  nstate = 32
-  nelec = 32
-  nelem = 1
-  natom = 8
+  al = {LX:.2f}, {LY:.2f}, {LZ:.2f}
+  nstate = {NELEC:d}
+  nelec = {NELEC:d}
+  nelem = {NELEM:d}
+  natom = {NATOM:d}
 /
 
 &pseudo
-  izatom(1) = 14
-  pseudo_file(1) = './Si_rps.dat'
-  lloc_ps(1) = 2
+  izatom = {IZATOM}
+  pseudo_file = {PSEUDO_FILE}
+  lloc_ps = {LLOC_PS}
 /
 
 &functional
@@ -63,12 +63,5 @@
 /
 
 &atomic_red_coor
-  'Si'	.0	.0	.0	1
-  'Si'	.25	.25	.25	1
-  'Si'	.5	.0	.5	1
-  'Si'	.0	.5	.5	1
-  'Si'	.5	.5	.0	1
-  'Si'	.75	.25	.75	1
-  'Si'	.25	.75	.75	1
-  'Si'	.75	.75	.25	1
+{ATOMIC_RED_COOR}
 /

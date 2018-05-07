@@ -2,6 +2,7 @@
 from core import cif
 from core import orthonormalize
 from core import tool
+from numpy.linalg import norm
 
 tbl_fhi_abinit = {
     # 'Symbol': [Z, nelec, lloc]
@@ -23,7 +24,7 @@ tbl_fhi_abinit = {
     'Pb': [82, 14, 0],'Bi': [83, 5, 0],'Po': [84, 6, 0],'At': [85, 7, 0],'Rn': [86, 8, 0],
 }
 
-a_prim, site_pos, site_label = cif.read_cif(open("C.cif").read())
+sysname, a_prim, site_pos, site_label = cif.read_cif(open("C.cif").read())
 
 ns, a_orth = orthonormalize.search_orthonormal_lattice(a_prim)
 
@@ -51,8 +52,18 @@ for r, lbl in zip(site_pos, site_label):
     total_nelec += tbl_fhi_abinit[lbl][1]
 
 
-print(atom_red_coord)
-print(izatom)
-print(lloc_ps)
-print(pseudo_file)
-print(total_nelec)
+with open("templates/gs_rt_response.inp") as fh:
+    print(fh.read().format(
+        SYSNAME = sysname,
+        LX = norm(a_orth[0]),
+        LY = norm(a_orth[1]),
+        LZ = norm(a_orth[2]),
+        NELEC = total_nelec,
+        NELEM = len(label_list),
+        NATOM = len(site_pos),
+        IZATOM = ",".join(izatom),
+        LLOC_PS = ",".join(lloc_ps),
+        PSEUDO_FILE = ",".join(pseudo_file),
+        ATOMIC_RED_COOR = "\n".join(atom_red_coord),
+    )
+)
