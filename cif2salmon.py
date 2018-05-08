@@ -44,6 +44,12 @@ def main():
     
     sys.stdout.write(salmon.dumps(file_template))
     
+    if opts.export_cif:
+        cif2 = cif_file.CIF(cif.sysname, a_orth, site_lbl, site_pos)
+        with open(opts.export_cif, "w") as fh_cif:
+            fh_cif.write(cif2.dumps())
+            
+    
 
 
 main()

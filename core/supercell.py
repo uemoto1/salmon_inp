@@ -5,7 +5,7 @@ from numpy import dot, array, empty, argmax, rint
 from numpy.linalg import norm, inv, det
 from . import tool
 
-eps = 1e-3
+eps = 1e-2
 
 def search_supercell(a_prim, rion, kion, nmax=2):
 

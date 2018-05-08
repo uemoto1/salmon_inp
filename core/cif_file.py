@@ -12,7 +12,7 @@ au_aa = 0.52917721067 # Bohr radius in Angstrom
 class CIF:
     """Simple CIF Import/Export Class"""
     
-    def __init__(self, sysname = '', a_prim=None, site_pos=None, site_lbl=None):
+    def __init__(self, sysname = '', a_prim=None, site_lbl=None, site_pos=None):
         """Create and Initialize CIF Object"""
         self.sysname = ''
         self.a_prim = a_prim
