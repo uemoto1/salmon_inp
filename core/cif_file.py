@@ -3,7 +3,7 @@ import sys
 import re
 import collections
 import numpy as np
-import tool
+from . import tool
 from numpy import pi, cos, sqrt, arccos
 from numpy.linalg import norm
 
@@ -200,6 +200,3 @@ class CIF:
         
         return "\n".join(buff)
         
-x = CIF()
-x.loads(sys.stdin.read())
-print(x.dumps())

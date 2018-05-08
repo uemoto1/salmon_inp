@@ -30,11 +30,11 @@
 /
 
 &rgrid
-  num_rgrid = 12, 12, 12
+  num_rgrid = {NX:d},{NY:d},{NZ:d}
 /
 
 &kgrid
-  num_kgrid = 4, 4, 4
+  num_kgrid = 8,8,8
 /
 
 &tgrid

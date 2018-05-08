@@ -61,6 +61,3 @@ class Salmon:
         
         return input_data
             
-x = Salmon("silicon", np.array([[10,0,0],[0,10,0],[0,0,10]]), ["Si"], [(0, 0, 0)], "sample.json")
-print(x.dumps("gs_rt_response.inp"))
-        
