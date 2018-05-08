@@ -90,6 +90,8 @@ class CIF:
         
         if '_chemical_name_systematic' in self.data:
             self.sysname = chem2sysname(self.data['_chemical_name_systematic'])
+        elif '_chemical_name_common' in self.data:
+            self.sysname = chem2sysname(self.data['_chemical_name_common'])
         elif '_chemical_name_mineral' in self.data:
             self.sysname = chem2sysname(self.data['_chemical_name_mineral'])
         # remove error range

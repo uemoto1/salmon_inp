@@ -37,10 +37,12 @@ def main():
         os.path.join(dir_pptbl, "%s.json" % opts.pptype),
     )
     
+    if os.path.isfile(opts.template):
+        file_template = opts.template
+    else:
+        file_template = os.path.join(dir_templates, "%s.inp" % opts.template)
     
-    print(salmon.dumps(
-        os.path.join(dir_templates, "%s.inp" % opts.template)
-    ))
+    sys.stdout.write(salmon.dumps(file_template))
     
 
 
