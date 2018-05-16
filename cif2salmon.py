@@ -1,30 +1,34 @@
 #!/usr/bin/env python3
-import sys
 import os
+import sys
+import optparse
 
 from core import cif_file
 from core import supercell
 from core import tool
 from core import salmon_file
-from numpy.linalg import norm
-
-import optparse
 
 dir_templates = os.path.join(os.curdir, "templates")
 dir_pptbl = os.path.join(os.curdir, "pptables")
 
 def main():
 
-    parser = optparse.OptionParser()
+    parser = optparse.OptionParser(
+        usage = """usage: %prog [options] < ciffile.cif > salmonfile.inp"""
+    )
     parser.add_option("-p", "--pptype", dest="pptype",
-                      default="abinit-fhi", type=str, help="Type of Pseudopotentials")
+                      default="abinit-fhi", type=str, help="Type of Pseudopotentials ")
     parser.add_option("-t", "--template", dest="template",
                       default="gs_rt_response", help="Calculation mode")
     parser.add_option("--export-cif", dest="export_cif",
                       default="", help="Export CIF file of generated supercell")
     opts, args = parser.parse_args()
 
-
+    if os.path.isfile(opts.template):
+        file_template = opts.template
+    else:
+        file_template = os.path.join(dir_templates, "%s.inp" % opts.template)
+                
     cif = cif_file.CIF()
     cif.loads(sys.stdin.read())
     
@@ -37,10 +41,7 @@ def main():
         os.path.join(dir_pptbl, "%s.json" % opts.pptype),
     )
     
-    if os.path.isfile(opts.template):
-        file_template = opts.template
-    else:
-        file_template = os.path.join(dir_templates, "%s.inp" % opts.template)
+
     
     sys.stdout.write(salmon.dumps(file_template))
     
@@ -48,8 +49,6 @@ def main():
         cif2 = cif_file.CIF(cif.sysname, a_orth, site_lbl, site_pos)
         with open(opts.export_cif, "w") as fh_cif:
             fh_cif.write(cif2.dumps())
-            
-    
 
-
-main()
+if __name__ == "__main__":
+    main()
