@@ -6,14 +6,14 @@ from numpy.linalg import norm
 
 class Salmon:
     
-    delta = 0.50 # Default grid spacing
     
-    def __init__(self, sysname, a_orth, site_lbl, site_pos, file_pptbl):
+    def __init__(self, sysname, a_orth, site_lbl, site_pos, file_pptbl, np=100):
         self.sysname = sysname
         self.a_orth = a_orth
         self.site_lbl = site_lbl
         self.site_pos = site_pos
         self.pp_list = list(set(self.site_lbl))
+        self.np = np
         
         if not os.path.isfile(file_pptbl):
             sys.stderr.write("# Potential '%s' is not found!" % file_pptbl)
@@ -28,15 +28,21 @@ class Salmon:
             sys.stderr.write("# Template '%s' is not found!" % file_template)
             sys.exit(-1)
         
+        # Search Prefered Delta
+        r_cutoff = min([self.pptbl[i]["r_cutoff"] for i in self.pp_list])
+        v_cutoff = (4.0 * np.pi / 3.0) * r_cutoff ** 3
+        delta = np.cbrt(v_cutoff / self.np)
+        
+        
         with open(file_template, "r") as fh_template:
             input_data = fh_template.read().format(
                 SYSNAME = self.sysname,
                 LX = norm(self.a_orth[0]),
                 LY = norm(self.a_orth[1]),
                 LZ = norm(self.a_orth[2]),
-                NX = int(norm(self.a_orth[0]) / self.delta / 4) * 4,
-                NY = int(norm(self.a_orth[1]) / self.delta / 4) * 4,
-                NZ = int(norm(self.a_orth[2]) / self.delta / 4) * 4,
+                NX = int(np.ceil(norm(self.a_orth[0]) / delta / 4)) * 4,
+                NY = int(np.ceil(norm(self.a_orth[1]) / delta / 4)) * 4,
+                NZ = int(np.ceil(norm(self.a_orth[2]) / delta / 4)) * 4,
                 NATOM = len(self.site_lbl),
                 NELEM = len(self.pp_list),
                 IZATOM = ",".join([

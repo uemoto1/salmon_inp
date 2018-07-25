@@ -20,6 +20,7 @@ def main():
                       default="abinit-fhi", type=str, help="Type of Pseudopotentials ")
     parser.add_option("-t", "--template", dest="template",
                       default="gs_rt_response", help="Calculation mode")
+    parser.add_option("--np", dest="np", type=int, default=100, help="Required number of grid inside potential")
     parser.add_option("--export-cif", dest="export_cif",
                       default="", help="Export CIF file of generated supercell")
     opts, args = parser.parse_args()
@@ -38,7 +39,7 @@ def main():
     
     salmon = salmon_file.Salmon(
         cif.sysname, a_orth, site_lbl, site_pos,  
-        os.path.join(dir_pptbl, "%s.json" % opts.pptype),
+        os.path.join(dir_pptbl, "%s.json" % opts.pptype), opts.np
     )
     
 
