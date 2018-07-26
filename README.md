@@ -1,6 +1,5 @@
 # salmon_inp
 
-![figure](examples/silicon_crystal.png)
 
 Convert CIF to SALMON inputfile
 
