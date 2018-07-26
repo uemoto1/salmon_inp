@@ -4,6 +4,10 @@
 
 Convert CIF to SALMON inputfile
 
+
+![figure](examples/illust.png)
+
+
 ## Requirements
 
  - Python 3
