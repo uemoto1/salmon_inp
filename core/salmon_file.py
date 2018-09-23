@@ -30,7 +30,8 @@ class Salmon:
             self.template = fh_template.read()
             
         self.pp_url = [
-            self.pptbl[i]['url'] for i in self.pp_list
+            (self.pptbl[i]['url'], self.pptbl[i]["pseudo_file"])
+            for i in self.pp_list
         ]
         
     def dumps(self):

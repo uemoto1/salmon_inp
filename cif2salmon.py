@@ -2,6 +2,8 @@
 import os
 import sys
 import optparse
+import subprocess
+import urllib.request
 
 from core import cif_file
 from core import supercell
@@ -26,6 +28,8 @@ def main():
                       default=150, help="Number of grid inside R_cutoff")
     parser.add_option("--export-cif", dest="export_cif", type=str,
                       default="", help="Export CIF file of generated supercell")
+    parser.add_option("-d", "--download", dest="download", action='store_true',
+                      default=False, help="Download pseudopotential")
     opts, args = parser.parse_args()
 
     if os.path.isfile(opts.template):
@@ -57,9 +61,14 @@ def main():
     sys.stdout.write('!\n')
     sys.stdout.write('! Required pseudopotentials:\n')
     for item in salmon.pp_url:
-        sys.stdout.write('! * %s\n' % item)
+        sys.stdout.write('! * %s\n' % item[0])
     sys.stdout.write('!\n\n')
     sys.stdout.write(salmon.dumps())
+    
+    if opts.download:
+        for url in salmon.pp_url:
+            sys.stderr.write('! Downloading %s\n' % url[0])
+            urllib.request.urlretrieve(url[0], url[1])
 
 
 
